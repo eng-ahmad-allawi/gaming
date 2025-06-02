@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>صالة الألعاب الرقمية - إدارة الشاشات</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="anti-inspect.css" />
+    <!-- PWA Support -->
+    <link rel="manifest" href="./manifest.json" />
+    <meta name="theme-color" content="#4a00e0" />
+    <meta name="description" content="تطبيق إدارة صالة الألعاب " />
+    <link rel="icon" href="icons/icon-192x192.png" />
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png" />
+  </head>
+  <body>
+    <!-- Login Modal -->
+    <div id="login-modal-overlay" class="login-modal-overlay">
+      <div class="login-modal">
+        <h2>تسجيل الدخول</h2>
+        <form id="login-form" class="login-form">
+          <div class="form-group">
+            <label for="username">اسم المستخدم</label>
+            <input type="text" id="username" required>
+          </div>
+          <div class="form-group">
+            <label for="password">كلمة المرور</label>
+            <input type="password" id="password" required>
+          </div>
+          <button type="submit" class="login-btn ripple-trigger">دخول</button>
+          <div id="login-error" class="login-error">اسم المستخدم أو كلمة المرور غير صحيحة</div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header class="main-header">
+      <div class="container">
+        <div class="header-left">
+          <div class="logo">gaming</div>
+        </div>
+
+        <div id="damascus-time" class="damascus-time">00:00:00</div>
+
+        <div id="rate-section">
+          <div id="rate-input-area">
+            <h3 class="rates-title">أسعار PS4</h3>
+            <div class="rate-input-group">
+              <label for="dual-rate-input">سعر ساعة الثنائي (ل.س): </label>
+              <input type="number" id="dual-rate-input" min="1" step="0.5" />
+            </div>
+            <div class="rate-input-group">
+              <label for="triple-rate-input">سعر ساعة الثلاثي (ل.س): </label>
+              <input type="number" id="triple-rate-input" min="1" step="0.5" />
+            </div>
+            <div class="rate-input-group">
+              <label for="quad-rate-input">سعر ساعة الرباعي (ل.س): </label>
+              <input type="number" id="quad-rate-input" min="1" step="0.5" />
+            </div>
+            
+            <h3 class="rates-title">أسعار PS5</h3>
+            <div class="rate-input-group">
+              <label for="ps5-dual-rate-input">سعر ساعة الثنائي (ل.س): </label>
+              <input type="number" id="ps5-dual-rate-input" min="1" step="0.5" />
+            </div>
+            <div class="rate-input-group">
+              <label for="ps5-triple-rate-input">سعر ساعة الثلاثي (ل.س): </label>
+              <input type="number" id="ps5-triple-rate-input" min="1" step="0.5" />
+            </div>
+            <div class="rate-input-group">
+              <label for="ps5-quad-rate-input">سعر ساعة الرباعي (ل.س): </label>
+              <input type="number" id="ps5-quad-rate-input" min="1" step="0.5" />
+            </div>
+            
+            <button id="save-rate-btn" class="btn btn-primary ripple-trigger">
+              حفظ الأسعار
+            </button>
+          </div>
+          <div id="rate-display-area" class="hidden">
+            <div class="rates-display">
+              <div class="rate-group">
+                <h3 class="rates-title">PS4</h3>
+                <div class="rate-item">
+                  <span class="rate-label">ثنائي:</span>
+                  <span id="dual-rate-display" class="rate-value">0</span>
+                  <span class="rate-unit">ل.س/ساعة</span>
+                </div>
+                <div class="rate-item">
+                  <span class="rate-label">ثلاثي:</span>
+                  <span id="triple-rate-display" class="rate-value">0</span>
+                  <span class="rate-unit">ل.س/ساعة</span>
+                </div>
+                <div class="rate-item">
+                  <span class="rate-label">رباعي:</span>
+                  <span id="quad-rate-display" class="rate-value">0</span>
+                  <span class="rate-unit">ل.س/ساعة</span>
+                </div>
+              </div>
+              
+              <div class="rate-group">
+                <h3 class="rates-title">PS5</h3>
+                <div class="rate-item">
+                  <span class="rate-label">ثنائي:</span>
+                  <span id="ps5-dual-rate-display" class="rate-value">0</span>
+                  <span class="rate-unit">ل.س/ساعة</span>
+                </div>
+                <div class="rate-item">
+                  <span class="rate-label">ثلاثي:</span>
+                  <span id="ps5-triple-rate-display" class="rate-value">0</span>
+                  <span class="rate-unit">ل.س/ساعة</span>
+                </div>
+                <div class="rate-item">
+                  <span class="rate-label">رباعي:</span>
+                  <span id="ps5-quad-rate-display" class="rate-value">0</span>
+                  <span class="rate-unit">ل.س/ساعة</span>
+                </div>
+              </div>
+            </div>
+            <button id="edit-rate-btn" class="btn btn-edit ripple-trigger">
+              تعديل
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+      <!-- Main App View -->
+      <div id="main-app-view">
+        <div class="screens-header">
+          <div id="active-screens-count" class="active-screens-count">
+            الشاشات النشطة: <span>0</span>
+          </div>
+          <div class="header-actions">
+            <a href="javascript:void(0);" id="profits-link" class="profits-link ripple-trigger"
+              >تقرير الأرباح 📊</a
+            >
+            <button
+              id="reset-all-screens-btn"
+              class="reset-all-btn ripple-trigger"
+            >
+              إعادة ضبط جميع الشاشات
+            </button>
+            <button
+              id="logout-btn"
+              class="logout-btn ripple-trigger"
+              onclick="logout()"
+            >
+              تسجيل الخروج
+            </button>
+          </div>
+        </div>
+
+        <!-- Warning Message Area -->
+        <div id="warning-message" class="hidden">
+          الرجاء إدخال وحفظ سعر الساعة أولاً لتتمكن من تشغيل الشاشات.
+        </div>
+
+        <!-- Screens Grid -->
+        <section id="screens-container" class="">
+        <!-- Cards will be generated by JavaScript or manually listed here -->
+        <!-- Example Card Structure (repeat 10 times with different IDs) -->
+        <div class="screen-card" data-screen-id="1">
+          <div class="screen-header">
+            <div class="triple-toggle" data-screen-id="1">
+              <span>ثلاثي</span>
+              <div class="toggle-indicator">
+                <i class="toggle-icon"></i>
+              </div>
+            </div>
+            <h3>1</h3>
+            <div class="quad-toggle" data-screen-id="1">
+              <span>رباعي</span>
+              <div class="toggle-indicator">
+                <i class="toggle-icon"></i>
+              </div>
+            </div>
+            <div class="payment-status unpaid" title="انقر لتغيير حالة الدفع (غير مدفوع)">
+              <i class="fas fa-times"></i>
+            </div>
+            <div class="screen-type ps5">PS5</div>
+          </div>
+          <div class="time-display">00:00:00</div>
+          <div class="buttons">
+            <div class="btn-container-row top-buttons">
+              <button class="btn btn-start start-btn ripple-trigger" disabled style="width: 23%; margin: 0 1% 5px 1%;">
+                بدء
+              </button>
+              <button class="btn btn-stop stop-btn ripple-trigger" disabled style="width: 23%; margin: 0 1% 5px 1%;">
+                إيقاف
+              </button>
+              <button
+                class="btn btn-reset reset-card-btn ripple-trigger"
+                disabled
+                style="width: 23%; margin: 0 1% 5px 1%;"
+              >
+                إعادة ضبط
+              </button>
+              <button class="btn btn-timer timer-btn ripple-trigger" disabled style="width: 23%; margin: 0 1% 5px 1%;">
+                مؤقت
+              </button>
+            </div>
+            <div class="btn-container-row">
+              <div class="btn-container" style="width: 32%;">
+                <button class="btn btn-drinks drinks-btn ripple-trigger" disabled>
+                  مشروبات
+                </button>
+                <div class="drinks-values"></div>
+              </div>
+              <div class="btn-container" style="width: 32%;">
+                <button class="btn btn-hookah hookah-btn ripple-trigger" disabled>
+                  أركيلة
+                </button>
+                <div class="hookah-values"></div>
+              </div>
+              <div class="btn-container" style="width: 32%;">
+                <button class="btn btn-previous-bill previous-bill-btn ripple-trigger" disabled>
+                  فاتورة سابقة
+                </button>
+                <div class="previous-bill-values"></div>
+              </div>
+            </div>
+          </div>
+          <div class="cost-display"></div>
+        </div>
+        <div class="screen-card" data-screen-id="2">
+          <div class="screen-header">
+            <div class="triple-toggle" data-screen-id="2">
+              <span>ثلاثي</span>
+              <div class="toggle-indicator">
+                <i class="toggle-icon"></i>
+              </div>
+            </div>
+            <h3>2</h3>
+            <div class="quad-toggle" data-screen-id="2">
+              <span>رباعي</span>
+              <div class="toggle-indicator">
+                <i class="toggle-icon"></i>
+              </div>
+            </div>
+            <div class="payment-status unpaid" title="انقر لتغيير حالة الدفع (غير مدفوع)">
+              <i class="fas fa-times"></i>
+            </div>
+            <div class="screen-type ps5">PS5</div>
+          </div>
+          <div class="time-display">00:00:00</div>
+          <div class="buttons">
+            <div class="btn-container-row top-buttons">
+              <button class="btn btn-start start-btn ripple-trigger" disabled style="width: 23%; margin: 0 1% 5px 1%;">
+                بدء
+              </button>
+              <button class="btn btn-stop stop-btn ripple-trigger" disabled style="width: 23%; margin: 0 1% 5px 1%;">
+                إيقاف
+              </button>
+              <button
+                class="btn btn-reset reset-card-btn ripple-trigger"
+                disabled
+                style="width: 23%; margin: 0 1% 5px 1%;"
+              >
+                إعادة ضبط
+              </button>
+              <button class="btn btn-timer timer-btn ripple-trigger" disabled style="width: 23%; margin: 0 1% 5px 1%;">
+                مؤقت
+              </button>
+            </div>
+            <div class="btn-container-row">
+              <div class="btn-container" style="width: 32%;">
+                <button class="btn btn-drinks drinks-btn ripple-trigger" disabled>
+                  مشروبات
+                </button>
+                <div class="drinks-values"></div>
+              </div>
+              <div class="btn-container" style="width: 32%;">
+                <button class="btn btn-hookah hookah-btn ripple-trigger" disabled>
+                  أركيلة
+                </button>
+                <div class="hookah-values"></div>
+              </div>
+              <div class="btn-container" style="width: 32%;">
+                <button class="btn btn-previous-bill previous-bill-btn ripple-trigger" disabled>
+                  فاتورة سابقة
+                </button>
+                <div class="previous-bill-values"></div>
+              </div>
+            </div>
+          </div>
+          <div class="cost-display"></div>
+        </div>
+        <div class="screen-card" data-screen-id="3">
+          <div class="screen-header">
+            <div class="triple-toggle" data-screen-id="3">
+              <span>ثلاثي</span>
+              <div class="toggle-indicator">
+                <i class="toggle-icon"></i>
+              </div>
+            </div>
+            <h3>3</h3>
+            <div class="quad-toggle" data-screen-id="3">
+              <span>رباعي</span>
+              <div class="toggle-indicator">
+                <i class="toggle-icon"></i>
+              </div>
+            </div>
+            <div class="payment-status unpaid" title="انقر لتغيير حالة الدفع (غير مدفوع)">
+              <i class="fas fa-times"></i>
+            </div>
+            <div class="screen-type ps4">PS4</div>
+          </div>
+          <div class="time-display">00:00:00</div>
+          <div class="buttons">
+            <div class="btn-container-row top-buttons">
+              <button class="btn btn-start start-btn ripple-trigger" disabled style="width: 23%; margin: 0 1% 5px 1%;">
+                بدء
+              </button>
+              <button class="btn btn-stop stop-btn ripple-trigger" disabled style="width: 23%; margin: 0 1% 5px 1%;">
+                إيقاف
+              </button>
+              <button
+                class="btn btn-reset reset-card-btn ripple-trigger"
+                disabled
+                style="width: 23%; margin: 0 1% 5px 1%;"
+              >
+                إعادة ضبط
+              </button>
+              <button class="btn btn-timer timer-btn ripple-trigger" disabled style="width: 23%; margin: 0 1% 5px 1%;">
+                مؤقت
+              </button>
+            </div>
+            <div class="btn-container-row">
+              <div class="btn-container" style="width: 32%;">
+                <button class="btn btn-drinks drinks-btn ripple-trigger" disabled>
+                  مشروبات
+                </button>
+                <div class="drinks-values"></div>
+              </div>
+              <div class="btn-container" style="width: 32%;">
+                <button class="btn btn-hookah hookah-btn ripple-trigger" disabled>
+                  أركيلة
+                </button>
+                <div class="hookah-values"></div>
+              </div>
+              <div class="btn-container" style="width: 32%;">
+                <button class="btn btn-previous-bill previous-bill-btn ripple-trigger" disabled>
+                  فاتورة سابقة
+                </button>
+                <div class="previous-bill-values"></div>
+              </div>
+            </div>
+          </div>
+          <div class="cost-display"></div>
+        </div>
+        <div class="screen-card" data-screen-id="4">
+          <div class="screen-header">
+            <div class="triple-toggle" data-screen-id="4">
+              <span>ثلاثي</span>
+              <div class="toggle-indicator">
+                <i class="toggle-icon"></i>
+              </div>
+            </div>
+            <h3>4</h3>
+            <div class="quad-toggle" data-screen-id="4">
+              <span>رباعي</span>
+              <div class="toggle-indicator">
+                <i class="toggle-icon"></i>
+              </div>
+            </div>
+            <div class="payment-status unpaid" title="انقر لتغيير حالة الدفع (غير مدفوع)">
+              <i class="fas fa-times"></i>
+            </div>
+            <div class="screen-type ps4">PS4</div>
+          </div>
+          <div class="time-display">00:00:00</div>
+          <div class="buttons">
+            <div class="btn-container-row top-buttons">
+              <button class="btn btn-start start-btn ripple-trigger" disabled style="width: 23%; margin: 0 1% 5px 1%;">
+                بدء
+              </button>
+              <button class="btn btn-stop stop-btn ripple-trigger" disabled style="width: 23%; margin: 0 1% 5px 1%;">
+                إيقاف
+              </button>
+              <button
+                class="btn btn-reset reset-card-btn ripple-trigger"
+                disabled
+                style="width: 23%; margin: 0 1% 5px 1%;"
+              >
+                إعادة ضبط
+              </button>
+              <button class="btn btn-timer timer-btn ripple-trigger" disabled style="width: 23%; margin: 0 1% 5px 1%;">
+                مؤقت
+              </button>
+            </div>
+            <div class="btn-container-row">
+              <div class="btn-container" style="width: 32%;">
+                <button class="btn btn-drinks drinks-btn ripple-trigger" disabled>
+                  مشروبات
+                </button>
+                <div class="drinks-values"></div>
+              </div>
+              <div class="btn-container" style="width: 32%;">
+                <button class="btn btn-hookah hookah-btn ripple-trigger" disabled>
+                  أركيلة
+                </button>
+                <div class="hookah-values"></div>
+              </div>
+              <div class="btn-container" style="width: 32%;">
+                <button class="btn btn-previous-bill previous-bill-btn ripple-trigger" disabled>
+                  فاتورة سابقة
+                </button>
+                <div class="previous-bill-values"></div>
+              </div>
+            </div>
+          </div>
+          <div class="cost-display"></div>
+        </div>
+        <div class="screen-card" data-screen-id="5">
+            <div class="screen-header">
+              <div class="triple-toggle" data-screen-id="5">
+                <span>ثلاثي</span>
+                <div class="toggle-indicator">
+                  <i class="toggle-icon"></i>
+                </div>
+              </div>
+              <h3>5</h3>
+              <div class="quad-toggle" data-screen-id="5">
+                <span>رباعي</span>
+                <div class="toggle-indicator">
+                  <i class="toggle-icon"></i>
+                </div>
+              </div>
+              <div class="payment-status unpaid" title="انقر لتغيير حالة الدفع (غير مدفوع)">
+                <i class="fas fa-times"></i>
+              </div>
+              <div class="screen-type ps4">PS4</div>
+            </div>
+            <div class="time-display">00:00:00</div>
+            <div class="buttons">
+              <div class="btn-container-row top-buttons">
+                <button class="btn btn-start start-btn ripple-trigger" disabled style="width: 23%; margin: 0 1% 5px 1%;">
+                  بدء
+                </button>
+                <button class="btn btn-stop stop-btn ripple-trigger" disabled style="width: 23%; margin: 0 1% 5px 1%;">
+                  إيقاف
+                </button>
+                <button
+                  class="btn btn-reset reset-card-btn ripple-trigger"
+                  disabled
+                  style="width: 23%; margin: 0 1% 5px 1%;"
+                >
+                  إعادة ضبط
+                </button>
+                <button class="btn btn-timer timer-btn ripple-trigger" disabled style="width: 23%; margin: 0 1% 5px 1%;">
+                  مؤقت
+                </button>
+              </div>
+              <div class="btn-container-row">
+                <div class="btn-container" style="width: 32%;">
+                  <button class="btn btn-drinks drinks-btn ripple-trigger" disabled>
+                    مشروبات
+                  </button>
+                  <div class="drinks-values"></div>
+                </div>
+                <div class="btn-container" style="width: 32%;">
+                  <button class="btn btn-hookah hookah-btn ripple-trigger" disabled>
+                    أركيلة
+                  </button>
+                  <div class="hookah-values"></div>
+                </div>
+                <div class="btn-container" style="width: 32%;">
+                  <button class="btn btn-previous-bill previous-bill-btn ripple-trigger" disabled>
+                    فاتورة سابقة
+                  </button>
+                  <div class="previous-bill-values"></div>
+                </div>
+              </div>
+            </div>
+            <div class="cost-display"></div>
+          </div>
+          <div class="screen-card" data-screen-id="6">
+            <div class="screen-header">
+              <div class="triple-toggle" data-screen-id="6">
+                <span>ثلاثي</span>
+                <div class="toggle-indicator">
+                  <i class="toggle-icon"></i>
+                </div>
+              </div>
+              <h3>6</h3>
+              <div class="quad-toggle" data-screen-id="6">
+                <span>رباعي</span>
+                <div class="toggle-indicator">
+                  <i class="toggle-icon"></i>
+                </div>
+              </div>
+              <div class="payment-status unpaid" title="انقر لتغيير حالة الدفع (غير مدفوع)">
+                <i class="fas fa-times"></i>
+              </div>
+              <div class="screen-type ps4">PS4</div>
+            </div>
+            <div class="time-display">00:00:00</div>
+            <div class="buttons">
+              <div class="btn-container-row top-buttons">
+                <button class="btn btn-start start-btn ripple-trigger" disabled style="width: 23%; margin: 0 1% 5px 1%;">
+                  بدء
+                </button>
+                <button class="btn btn-stop stop-btn ripple-trigger" disabled style="width: 23%; margin: 0 1% 5px 1%;">
+                  إيقاف
+                </button>
+                <button
+                  class="btn btn-reset reset-card-btn ripple-trigger"
+                  disabled
+                  style="width: 23%; margin: 0 1% 5px 1%;"
+                >
+                  إعادة ضبط
+                </button>
+                <button class="btn btn-timer timer-btn ripple-trigger" disabled style="width: 23%; margin: 0 1% 5px 1%;">
+                  مؤقت
+                </button>
+              </div>
+              <div class="btn-container-row">
+                <div class="btn-container" style="width: 32%;">
+                  <button class="btn btn-drinks drinks-btn ripple-trigger" disabled>
+                    مشروبات
+                  </button>
+                  <div class="drinks-values"></div>
+                </div>
+                <div class="btn-container" style="width: 32%;">
+                  <button class="btn btn-hookah hookah-btn ripple-trigger" disabled>
+                    أركيلة
+                  </button>
+                  <div class="hookah-values"></div>
+                </div>
+                <div class="btn-container" style="width: 32%;">
+                  <button class="btn btn-previous-bill previous-bill-btn ripple-trigger" disabled>
+                    فاتورة سابقة
+                  </button>
+                  <div class="previous-bill-values"></div>
+                </div>
+              </div>
+            </div>
+            <div class="cost-display"></div>
+          </div>
+
+        <!--
+          *** SCREEN 7 - COMMENTED OUT ***
+          To restore this screen, remove the comment tags surrounding it
+          <div class="screen-card" data-screen-id="7">
+            <div class="screen-header">
+              <h3>7</h3>
+              <div class="quad-toggle" data-screen-id="7">
+                <span>رباعي</span>
+                <div class="toggle-indicator">
+                  <i class="toggle-icon"></i>
+                </div>
+              </div>
+            </div>
+            <div class="time-display">00:00:00</div>
+            <div class="buttons">
+              <button class="btn btn-start start-btn ripple-trigger" disabled>
+                بدء
+              </button>
+              <button class="btn btn-stop stop-btn ripple-trigger" disabled>
+                إيقاف
+              </button>
+              <button
+                class="btn btn-reset reset-card-btn ripple-trigger"
+                disabled
+              >
+                إعادة ضبط
+              </button>
+              <button class="btn btn-timer timer-btn ripple-trigger" disabled>
+                مؤقت
+              </button>
+              <div class="btn-container-row">
+                <div class="btn-container" style="width: 32%;">
+                  <button class="btn btn-drinks drinks-btn ripple-trigger" disabled>
+                    مشروبات
+                  </button>
+                  <div class="drinks-values"></div>
+                </div>
+                <div class="btn-container" style="width: 32%;">
+                  <button class="btn btn-hookah hookah-btn ripple-trigger" disabled>
+                    أركيلة
+                  </button>
+                  <div class="hookah-values"></div>
+                </div>
+                <div class="btn-container" style="width: 32%;">
+                  <button class="btn btn-previous-bill previous-bill-btn ripple-trigger" disabled>
+                    فاتورة سابقة
+                  </button>
+                  <div class="previous-bill-values"></div>
+                </div>
+              </div>
+            </div>
+            <div class="cost-display"></div>
+          </div>
+        *** SCREEN 8 - COMMENTED OUT ***
+        To restore this screen, remove the comment tags surrounding it
+        <div class="screen-card" data-screen-id="8">
+          <div class="screen-header">
+            <h3>8</h3>
+            <div class="quad-toggle" data-screen-id="8">
+              <span>رباعي</span>
+              <div class="toggle-indicator">
+                <i class="toggle-icon"></i>
+              </div>
+            </div>
+          </div>
+          <div class="time-display">00:00:00</div>
+          <div class="buttons">
+            <button class="btn btn-start start-btn ripple-trigger" disabled>
+              بدء
+            </button>
+            <button class="btn btn-stop stop-btn ripple-trigger" disabled>
+              إيقاف
+            </button>
+            <button
+              class="btn btn-reset reset-card-btn ripple-trigger"
+              disabled
+            >
+              إعادة ضبط
+            </button>
+            <button class="btn btn-timer timer-btn ripple-trigger" disabled>
+              مؤقت
+            </button>
+            <div class="btn-container-row">
+              <div class="btn-container" style="width: 32%;">
+                <button class="btn btn-drinks drinks-btn ripple-trigger" disabled>
+                  مشروبات
+                </button>
+                <div class="drinks-values"></div>
+              </div>
+              <div class="btn-container" style="width: 32%;">
+                <button class="btn btn-hookah hookah-btn ripple-trigger" disabled>
+                  أركيلة
+                </button>
+                <div class="hookah-values"></div>
+              </div>
+              <div class="btn-container" style="width: 32%;">
+                <button class="btn btn-previous-bill previous-bill-btn ripple-trigger" disabled>
+                  فاتورة سابقة
+                </button>
+                <div class="previous-bill-values"></div>
+              </div>
+            </div>
+          </div>
+          <div class="cost-display"></div>
+        </div>
+        -->
+        <!--
+        *** SCREEN 9 - COMMENTED OUT ***
+        To restore this screen, remove the comment tags surrounding it
+        <div class="screen-card" data-screen-id="9">
+          <div class="screen-header">
+            <h3>9</h3>
+            <div class="quad-toggle" data-screen-id="9">
+              <span>رباعي</span>
+              <div class="toggle-indicator">
+                <i class="toggle-icon"></i>
+              </div>
+            </div>
+          </div>
+          <div class="time-display">00:00:00</div>
+          <div class="buttons">
+            <button class="btn btn-start start-btn ripple-trigger" disabled>
+              بدء
+            </button>
+            <button class="btn btn-stop stop-btn ripple-trigger" disabled>
+              إيقاف
+            </button>
+            <button
+              class="btn btn-reset reset-card-btn ripple-trigger"
+              disabled
+            >
+              إعادة ضبط
+            </button>
+            <button class="btn btn-timer timer-btn ripple-trigger" disabled>
+              مؤقت
+            </button>
+            <div class="btn-container-row">
+              <div class="btn-container" style="width: 32%;">
+                <button class="btn btn-drinks drinks-btn ripple-trigger" disabled>
+                  مشروبات
+                </button>
+                <div class="drinks-values"></div>
+              </div>
+              <div class="btn-container" style="width: 32%;">
+                <button class="btn btn-hookah hookah-btn ripple-trigger" disabled>
+                  أركيلة
+                </button>
+                <div class="hookah-values"></div>
+              </div>
+              <div class="btn-container" style="width: 32%;">
+                <button class="btn btn-previous-bill previous-bill-btn ripple-trigger" disabled>
+                  فاتورة سابقة
+                </button>
+                <div class="previous-bill-values"></div>
+              </div>
+            </div>
+          </div>
+          <div class="cost-display"></div>
+        </div>
+        -->
+        <!--
+        *** SCREEN 10 - COMMENTED OUT ***
+        To restore this screen, remove the comment tags surrounding it
+        <div class="screen-card" data-screen-id="10">
+          <div class="screen-header">
+            <h3>10</h3>
+            <div class="quad-toggle" data-screen-id="10">
+              <span>رباعي</span>
+              <div class="toggle-indicator">
+                <i class="toggle-icon"></i>
+              </div>
+            </div>
+          </div>
+          <div class="time-display">00:00:00</div>
+          <div class="buttons">
+            <button class="btn btn-start start-btn ripple-trigger" disabled>
+              بدء
+            </button>
+            <button class="btn btn-stop stop-btn ripple-trigger" disabled>
+              إيقاف
+            </button>
+            <button
+              class="btn btn-reset reset-card-btn ripple-trigger"
+              disabled
+            >
+              إعادة ضبط
+            </button>
+            <button class="btn btn-timer timer-btn ripple-trigger" disabled>
+              مؤقت
+            </button>
+            <div class="btn-container-row">
+              <div class="btn-container" style="width: 32%;">
+                <button class="btn btn-drinks drinks-btn ripple-trigger" disabled>
+                  مشروبات
+                </button>
+                <div class="drinks-values"></div>
+              </div>
+              <div class="btn-container" style="width: 32%;">
+                <button class="btn btn-hookah hookah-btn ripple-trigger" disabled>
+                  أركيلة
+                </button>
+                <div class="hookah-values"></div>
+              </div>
+              <div class="btn-container" style="width: 32%;">
+                <button class="btn btn-previous-bill previous-bill-btn ripple-trigger" disabled>
+                  فاتورة سابقة
+                </button>
+                <div class="previous-bill-values"></div>
+              </div>
+            </div>
+          </div>
+          <div class="cost-display"></div>
+        </div>
+        -->
+        <!-- Add more cards up to 10 -->
+      </section>
+      </div>
+
+      <!-- Profits View -->
+      <div id="profits-view" class="hidden">
+        <div class="profits-header">
+          <h2>تقرير الأرباح اليومية</h2>
+          <div class="profits-actions">
+            <button id="back-to-main-btn" class="btn btn-secondary ripple-trigger">العودة للشاشات</button>
+            <button id="refresh-profits-btn" class="btn btn-secondary ripple-trigger">تحديث</button>
+          </div>
+        </div>
+
+        <div class="profits-summary">
+          <div class="summary-card">
+            <h3>إجمالي اليوم</h3>
+            <div class="summary-value" id="total-profit">0 ل.س</div>
+          </div>
+          <div class="summary-card">
+            <h3>أرباح الشاشات</h3>
+            <div class="summary-value" id="screens-profit">0 ل.س</div>
+          </div>
+          <div class="summary-card">
+            <h3>أرباح المشروبات</h3>
+            <div class="summary-value" id="drinks-profit">0 ل.س</div>
+          </div>
+          <div class="summary-card">
+            <h3>أرباح الأراكيل</h3>
+            <div class="summary-value" id="hookah-profit">0 ل.س</div>
+          </div>
+          <div class="summary-card">
+            <h3>عدد المعاملات</h3>
+            <div class="summary-value" id="transactions-count">0</div>
+          </div>
+        </div>
+
+
+
+        <div class="transactions-container">
+          <h3>سجل المعاملات</h3>
+
+          <!-- إضافة قسم اختيار الشهر والسنة -->
+          <div class="month-selector">
+            <div class="filter-group">
+              <label for="filter-year">السنة:</label>
+              <select id="filter-year" class="filter-select">
+                <!-- سيتم ملء هذا القسم ديناميكياً -->
+              </select>
+            </div>
+            <div class="filter-group">
+              <label for="filter-month">الشهر:</label>
+              <select id="filter-month" class="filter-select">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- إضافة عرض أيام الشهر -->
+          <div class="days-container" id="days-container">
+            <!-- سيتم ملء هذا القسم ديناميكياً بأيام الشهر -->
+          </div>
+
+          <!-- إضافة عرض الإجمالي الشهري -->
+          <div class="monthly-summary">
+            <h4>الإجمالي الشهري</h4>
+            <div class="monthly-summary-content" id="monthly-summary-content">
+              <div class="summary-item">
+                <span>إجمالي الشاشات:</span>
+                <span id="monthly-screens-total">0 ل.س</span>
+              </div>
+              <div class="summary-item">
+                <span>إجمالي المشروبات:</span>
+                <span id="monthly-drinks-total">0 ل.س</span>
+              </div>
+              <div class="summary-item">
+                <span>إجمالي الأراكيل:</span>
+                <span id="monthly-hookah-total">0 ل.س</span>
+              </div>
+              <div class="summary-item total">
+                <span>الإجمالي:</span>
+                <span id="monthly-total">0 ل.س</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="transactions-filters">
+            <div class="filter-group">
+              <label for="filter-type">تصفية حسب النوع:</label>
+              <select id="filter-type" class="filter-select">
+                <option value="all">الكل</option>
+                <option value="screen">الشاشات</option>
+                <option value="drinks">المشروبات</option>
+                <option value="hookah">الأراكيل</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label for="filter-screen">تصفية حسب الشاشة:</label>
+              <select id="filter-screen" class="filter-select">
+                <option value="all">الكل</option>
+                <option value="1">شاشة 1</option>
+                <option value="2">شاشة 2</option>
+                <option value="3">شاشة 3</option>
+                <option value="4">شاشة 4</option>
+                <option value="5">شاشة 5</option>
+                <option value="6">شاشة 6</option>
+                <!--
+                  *** SCREENS 7-10 FILTER OPTIONS - COMMENTED OUT ***
+                  To restore these options, remove the comment tags surrounding them
+                <option value="7">شاشة 7</option>
+                <option value="8">شاشة 8</option>
+                <option value="9">شاشة 9</option>
+                <option value="10">شاشة 10</option>
+                -->
+              </select>
+            </div>
+          </div>
+          <div class="transactions-list" id="transactions-list">
+            <!-- سيتم ملء هذا القسم ديناميكياً -->
+          </div>
+
+          <!-- تم إزالة زر مسح سجل المعاملات -->
+        </div>
+      </div>
+    </main>
+
+    <!-- نافذة التفاصيل المنبثقة -->
+    <div class="details-modal-overlay" id="details-modal">
+        <div class="details-modal">
+            <button class="close-btn" id="close-details-btn">&times;</button>
+            <h3>تفاصيل المعاملة</h3>
+            <div class="details-content" id="details-content">
+                <!-- سيتم ملء المحتوى ديناميكياً -->
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة مسح سجل المعاملات المنبثقة -->
+    <div class="clear-data-modal-overlay" id="clear-data-modal">
+        <div class="clear-data-modal">
+            <button class="close-btn" id="close-clear-data-btn">&times;</button>
+            <h3>تأكيد مسح سجل المعاملات</h3>
+            <p>هل أنت متأكد من أنك تريد مسح سجل المعاملات؟ لا يمكن التراجع عن هذا الإجراء.</p>
+            <div class="btn-group">
+                <button class="confirm-btn" id="confirm-clear-data-btn">نعم، امسح السجل</button>
+                <button class="cancel-btn" id="cancel-clear-data-btn">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة مسح بيانات الشهر المنبثقة -->
+    <div class="clear-data-modal-overlay" id="clear-month-modal">
+        <div class="clear-data-modal">
+            <button class="close-btn" id="close-clear-month-btn">&times;</button>
+            <h3>تأكيد مسح بيانات الشهر</h3>
+            <p>هل أنت متأكد من أنك تريد مسح جميع بيانات الشهر الحالي؟ سيتم مسح جميع الأرباح اليومية والشهرية وسجل المعاملات. لا يمكن التراجع عن هذا الإجراء.</p>
+            <div class="btn-group">
+                <button class="confirm-btn" id="confirm-clear-month-btn">نعم، امسح بيانات الشهر</button>
+                <button class="cancel-btn" id="cancel-clear-month-btn">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timer Modal -->
+    <div class="timer-modal-overlay" id="timer-modal-overlay">
+      <div class="timer-modal">
+        <button class="close-btn" id="close-modal-btn">&times;</button>
+        <h3 id="timer-modal-title">مؤقت الشاشة <span></span></h3>
+
+        <div class="timer-options">
+          <div class="timer-option active" data-option="minutes">بالدقائق</div>
+          <div class="timer-option" data-option="cost">بالسعر</div>
+        </div>
+
+        <div class="input-group" id="minutes-input-group">
+          <label for="minutes-input">عدد الدقائق:</label>
+          <input
+            type="number"
+            id="minutes-input"
+            min="1"
+            placeholder="مثال: 60"
+          />
+        </div>
+
+        <div class="input-group hidden" id="cost-input-group">
+          <label for="cost-input">المبلغ (ل.س):</label>
+          <input
+            type="number"
+            id="cost-input"
+            min="1"
+            placeholder="مثال: 100"
+          />
+          <div class="calculated-time hidden" id="calculated-time"></div>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn btn-primary" id="start-timer-btn">
+            بدء المؤقت
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notifications Container -->
+    <div id="notifications-container"></div>
+
+    <!-- Confirm Reset Modal -->
+    <div class="timer-modal-overlay" id="confirm-reset-overlay">
+      <div class="timer-modal confirm-modal">
+        <button class="close-btn" id="close-confirm-btn">&times;</button>
+        <h3 id="confirm-reset-title">تأكيد إعادة الضبط</h3>
+
+        <p class="confirm-message">
+          هل أنت متأكد من إعادة ضبط هذه الشاشة؟ سيتم إيقاف المؤقت ومسح جميع
+          البيانات.
+        </p>
+
+        <div class="btn-group">
+          <button class="btn btn-primary" id="confirm-reset-btn">
+            نعم، إعادة الضبط
+          </button>
+          <button class="btn btn-secondary" id="cancel-reset-btn">إلغاء</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirm Reset All Modal -->
+    <div class="timer-modal-overlay" id="confirm-reset-all-overlay">
+      <div class="timer-modal confirm-modal">
+        <button class="close-btn" id="close-confirm-all-btn">&times;</button>
+        <h3 id="confirm-reset-all-title">تأكيد إعادة ضبط جميع الشاشات</h3>
+
+        <p class="confirm-message">
+          هل أنت متأكد من إعادة ضبط جميع الشاشات؟ سيتم إيقاف جميع المؤقتات ومسح
+          جميع البيانات.
+        </p>
+
+        <div class="btn-group">
+          <button class="btn btn-primary" id="confirm-reset-all-btn">
+            نعم، إعادة ضبط الكل
+          </button>
+          <button class="btn btn-secondary" id="cancel-reset-all-btn">
+            إلغاء
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Drinks Modal -->
+    <div class="timer-modal-overlay" id="drinks-modal-overlay">
+      <div class="timer-modal">
+        <button class="close-btn" id="close-drinks-modal-btn">&times;</button>
+        <h3 id="drinks-modal-title">إضافة مشروبات للشاشة <span></span></h3>
+
+        <div class="input-group">
+          <label for="drinks-cost-input">المبلغ (ل.س):</label>
+          <input
+            type="number"
+            id="drinks-cost-input"
+            min="1"
+            placeholder="مثال: 100"
+          />
+        </div>
+
+        <div class="btn-group">
+          <button class="btn btn-primary" id="add-drinks-btn">إضافة</button>
+          <button class="btn btn-secondary" id="cancel-drinks-btn">
+            إلغاء
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hookah Modal -->
+    <div class="timer-modal-overlay" id="hookah-modal-overlay">
+      <div class="timer-modal">
+        <button class="close-btn" id="close-hookah-modal-btn">&times;</button>
+        <h3 id="hookah-modal-title">إضافة أركيلة للشاشة <span></span></h3>
+
+        <div class="input-group">
+          <label for="hookah-cost-input">المبلغ (ل.س):</label>
+          <input
+            type="number"
+            id="hookah-cost-input"
+            min="1"
+            placeholder="مثال: 100"
+          />
+        </div>
+
+        <div class="btn-group">
+          <button class="btn btn-primary" id="add-hookah-btn">إضافة</button>
+          <button class="btn btn-secondary" id="cancel-hookah-btn">
+            إلغاء
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Previous Bill Modal -->
+    <div class="timer-modal-overlay" id="previous-bill-modal-overlay">
+      <div class="timer-modal">
+        <button class="close-btn" id="close-previous-bill-modal-btn">&times;</button>
+        <h3 id="previous-bill-modal-title">إضافة فاتورة سابقة للشاشة <span></span></h3>
+
+        <div class="input-group">
+          <label for="previous-bill-cost-input">المبلغ (ل.س):</label>
+          <input
+            type="number"
+            id="previous-bill-cost-input"
+            min="1"
+            placeholder="مثال: 500"
+          />
+        </div>
+
+        <div class="btn-group">
+          <button class="btn btn-primary" id="add-previous-bill-btn">إضافة</button>
+          <button class="btn btn-secondary" id="cancel-previous-bill-btn">
+            إلغاء
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="timer-modal-overlay" id="logout-confirm-overlay">
+      <div class="timer-modal">
+        <button class="close-btn" id="close-logout-confirm-btn">&times;</button>
+        <h3>تأكيد تسجيل الخروج</h3>
+        <p class="confirm-message">هل أنت متأكد من رغبتك في تسجيل الخروج؟</p>
+        <div class="btn-group">
+          <button class="btn btn-primary" id="confirm-logout-btn">نعم، تسجيل الخروج</button>
+          <button class="btn btn-secondary" id="cancel-logout-btn">إلغاء</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add hidden audio element to fix notification sound issues -->
+    <audio id="notification-sound" preload="auto">
+      <source src="sounds/noti.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Sound Test Button (for debugging) -->
+    <div id="sound-test-area" style="position: fixed; bottom: 10px; left: 10px; z-index: 1000;">
+      <button id="test-sound-btn" onclick="window.testSound()" style="padding: 5px 10px; background: #333; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        اختبار الصوت
+      </button>
+    </div>
+
+    <!-- Load scripts in correct order -->
+    <script src="sounds/notification.js"></script>
+    <script>
+      // تعريف الدوال الضرورية قبل تحميل main.js
+      window.checkAuthentication = function() {
+        const isAuthenticated = localStorage.getItem('isAuthenticated');
+        if (isAuthenticated === 'true') {
+          return true;
+        } else {
+          return false;
+        }
+      };
+      window.previousBillValues = {};
+    </script>
+    <script src="main.js"></script>
+    <script src="clear-data.js"></script>
+    <script src="sw-register.js"></script>
+  </body>
+</html>
