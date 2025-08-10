@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--
+    README (inline, brief)
+    Title: Ahmad Allawi – Creative Frontend Developer (Single-file Portfolio)
+
+    How to customize:
+    - Search for "REPLACE:" comments to swap text, images, links, and metrics.
+    - Colors: adjust CSS variables in :root (colors, spacing, radii, shadows, animation tokens).
+    - Fonts: Optional Google Fonts (Inter, Playfair Display). Works with system fonts if blocked.
+    - Images: Replace SVG placeholders or set real images via data-src/srcset. Keep alt text accurate.
+
+    Testing:
+    - Open this file directly in a browser (no build needed). For local server: `python3 -m http.server 8000` then open http://localhost:8000/ahmad-allawi-portfolio.html
+    - Lighthouse (headless):
+      npx lighthouse http://localhost:8000/ahmad-allawi-portfolio.html --chrome-flags="--headless" --output html --output-path=report.html
+    - Mobile testing: use Chrome DevTools device emulation; test breakpoints 360, 412, 768, 1024, 1280.
+
+    Known caveats and graceful degradations:
+    - Fonts/CDNs optional: Falls back to system fonts/icons if blocked.
+    - Animations: Respect prefers-reduced-motion; non-essential effects disabled when enabled.
+    - AOS optional: If blocked, a tiny IntersectionObserver fallback runs; if JS disabled, content is visible (no reveal).
+    - Modals: Enhanced with <dialog>. Without JS, projects link to in-page <details> sections.
+
+    QA checklist (at end of file, in comment) outlines acceptance criteria.
+  -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Ahmad Allawi – Creative Frontend Developer</title>
+  <meta name="description" content="Portfolio of Ahmad Allawi, Creative Frontend Developer. UI engineering, accessibility, performance, and delightful UX."> 
+  <meta name="theme-color" content="#222831" />
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:title" content="Ahmad Allawi – Creative Frontend Developer">
+  <meta property="og:description" content="A museum-piece of modern frontend craft: accessible, fast, and elegant.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://example.com"> <!-- REPLACE: canonical URL if hosted -->
+  <meta property="og:image" content="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='630'%3E%3Crect width='100%25' height='100%25' fill='%23222831'/%3E%3Ctext x='50%25' y='52%25' dominant-baseline='middle' text-anchor='middle' fill='%23EEEEEE' font-family='system-ui,Inter,Arial' font-size='54'%3EAhmad Allawi%3C/text%3E%3C/svg%3E">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- JSON-LD schema.org Person -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Ahmad Allawi",
+    "jobTitle": "Creative Frontend Developer",
+    "url": "https://example.com",
+    "email": "mailto:placeholder@email.com",
+    "sameAs": [
+      "https://github.com/username", /* REPLACE */
+      "https://www.linkedin.com/in/username/" /* REPLACE */
+    ]
+  }
+  </script>
+
+  <!-- Optional fonts (graceful fallback to system stack if blocked) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" as="style" onload="this.media='all'" media="print">
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+  </noscript>
+
+  <!-- Optional AOS for scroll-reveal (with graceful fallback) -->
+  <link rel="preload" href="https://unpkg.com/aos@2.3.4/dist/aos.css" as="style" onload="this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
+  </noscript>
+
+  <style>
+    /*
+      Core Design System
+      - Colors, typography, spacing, radii, shadows, animation tokens
+    */
+    :root {
+      /* Colors (exact spec) */
+      --bg-primary: #222831;
+      --bg-secondary: #393E46;
+      --accent: #00ADB5;
+      --text-primary: #EEEEEE;
+      --text-secondary: rgba(238,238,238,0.75);
+
+      /* Tokens */
+      --container-max: 1200px;
+      --radius-xl: 20px;
+      --radius-2xl: 28px;
+      --radius-pill: 999px;
+
+      /* Spacing scale (4px base) */
+      --sp-4: 4px;  --sp-8: 8px;  --sp-12: 12px; --sp-16: 16px; --sp-24: 24px; --sp-32: 32px;
+      --sp-48: 48px; --sp-64: 64px; --sp-96: 96px; --sp-128: 128px;
+
+      /* Typography */
+      --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --font-serif: "Playfair Display", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+      --leading-body: 1.6; /* body */
+      --leading-head: 1.2; /* headings */
+      --tracking-head: 0.2px;
+
+      /* Modular scale (1.25) base ~16 */
+      --fs-100: 0.8rem;
+      --fs-200: 0.9rem;
+      --fs-300: 1rem;     /* body */
+      --fs-400: 1.25rem;  /* h6 */
+      --fs-500: 1.563rem; /* h5 */
+      --fs-600: 1.953rem; /* h4 */
+      --fs-700: 2.441rem; /* h3 */
+      --fs-800: 3.052rem; /* h2 */
+      --fs-900: 3.815rem; /* h1 */
+
+      /* Motion tokens */
+      --dur-fast: 120ms;
+      --dur-med: 240ms;
+      --dur-slow: 420ms;
+      --ease-emph: cubic-bezier(.22,.88,.35,1);
+      --ease-std: cubic-bezier(.2,.6,.2,1);
+
+      /* Shadows */
+      --shadow-sm: 0 2px 6px rgba(0,0,0,0.25);
+      --shadow-md: 0 8px 20px rgba(0,0,0,0.35);
+      --shadow-lg: 0 16px 40px rgba(0,0,0,0.45);
+      --shadow-inset: inset 0 1px 0 rgba(255,255,255,0.04);
+
+      /* Borders */
+      --hairline: 1px solid rgba(255,255,255,0.06);
+    }
+
+    @media (min-width: 768px) {
+      :root { --fs-900: 4.5rem; --fs-800: 3.4rem; }
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html:focus-within { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--text-primary);
+      background: var(--bg-primary);
+      font: 400 var(--fs-300)/var(--leading-body) var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    img { max-width: 100%; height: auto; display: block; }
+
+    /* Utilities */
+    .container { width: min(100% - 32px, var(--container-max)); margin-inline: auto; }
+    .section { padding-block: 60px; }
+    @media (min-width: 768px) { .section { padding-block: 80px; } }
+    @media (min-width: 1024px) { .section { padding-block: 120px; } }
+
+    .eyebrow { color: var(--text-secondary); font-size: var(--fs-200); letter-spacing: 1px; text-transform: uppercase; }
+
+    .btn { display: inline-flex; align-items: center; gap: 10px; border-radius: var(--radius-pill); padding: 12px 18px; font-weight: 600; border: 1px solid transparent; transition: transform var(--dur-fast) var(--ease-emph), box-shadow var(--dur-fast) var(--ease-std), background var(--dur-fast) var(--ease-std); }
+    .btn:focus-visible { outline: 2px solid transparent; box-shadow: 0 0 0 3px rgba(0,173,181,0.6); }
+    .btn-primary { background: var(--accent); color: #001315; }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+    .btn-secondary { background: transparent; border-color: rgba(255,255,255,0.2); color: var(--text-primary); }
+    .btn-secondary:hover { background: rgba(255,255,255,0.04); }
+
+    .chip { display:inline-block; padding: 6px 10px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); font-size: var(--fs-200); color: var(--text-secondary); }
+
+    /* Skip link */
+    .skip-link { position: absolute; left: -999px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+    .skip-link:focus { position: fixed; left: 12px; top: 12px; width: auto; height: auto; padding: 10px 14px; background: var(--accent); color: #001315; border-radius: var(--radius-pill); z-index: 9999; }
+
+    /* Header */
+    header.site-header { position: sticky; top: 0; z-index: 1000; backdrop-filter: saturate(140%) blur(10px); background: rgba(34,40,49,0.7); border-bottom: var(--hairline); }
+    .nav-wrap { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px; padding: 12px 0; }
+    .brand { font-family: var(--font-serif); letter-spacing: 0.3px; font-weight: 700; }
+
+    /* Responsive nav using <details> progressive disclosure */
+    details.nav { position: relative; }
+    details.nav > summary { list-style: none; cursor: pointer; border: 1px solid rgba(255,255,255,0.14); border-radius: var(--radius-pill); padding: 8px 12px; display: inline-flex; align-items: center; gap: 8px; color: var(--text-primary); background: rgba(255,255,255,0.03); user-select: none; }
+    details.nav > summary::-webkit-details-marker { display: none; }
+    .hamburger { width: 20px; height: 14px; position: relative; display: inline-block; }
+    .hamburger span { position: absolute; left: 0; width: 100%; height: 2px; background: var(--text-primary); transition: transform var(--dur-fast) var(--ease-std), opacity var(--dur-fast) var(--ease-std); }
+    .hamburger span:nth-child(1) { top: 0; }
+    .hamburger span:nth-child(2) { top: 6px; }
+    .hamburger span:nth-child(3) { top: 12px; }
+    details[open] .hamburger span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+    details[open] .hamburger span:nth-child(2) { opacity: 0; }
+    details[open] .hamburger span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+    nav.menu { display: flex; gap: 16px; align-items: center; }
+    nav.menu a { color: var(--text-secondary); padding: 8px 12px; border-radius: var(--radius-pill); }
+    nav.menu a:focus-visible, nav.menu a:hover { background: rgba(255,255,255,0.06); color: var(--text-primary); text-decoration: none; }
+
+    /* Off-canvas panel on small screens */
+    .panel { position: fixed; inset: 60px 12px auto 12px; background: rgba(57,62,70,0.95); border: var(--hairline); border-radius: var(--radius-2xl); box-shadow: var(--shadow-lg); padding: 16px; transform-origin: top right; transform: scale(0.98) translateY(-6px); opacity: 0; pointer-events: none; transition: opacity var(--dur-fast) var(--ease-std), transform var(--dur-fast) var(--ease-std); }
+    details[open] .panel { opacity: 1; transform: none; pointer-events: auto; }
+
+    @media (min-width: 1024px) {
+      details.nav { display: contents; }
+      details.nav > summary { display: none; }
+      .panel { position: static; inset: auto; transform: none; opacity: 1; pointer-events: auto; background: transparent; border: 0; box-shadow: none; padding: 0; }
+      nav.menu { justify-content: end; }
+    }
+
+    /* Hero */
+    .hero { position: relative; min-height: 100svh; display: grid; align-items: center; }
+    .hero-grid { display: grid; gap: 32px; align-items: center; }
+    @media (min-width: 1024px) { .hero-grid { grid-template-columns: 1.1fr 0.9fr; gap: 48px; } }
+    .hero h1 { font-family: var(--font-serif); font-weight: 800; line-height: var(--leading-head); font-size: var(--fs-900); letter-spacing: var(--tracking-head); margin: 0 0 12px; }
+    .hero p { color: var(--text-secondary); font-size: var(--fs-400); }
+    .cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+
+    /* Animated gradient mesh background */
+    .mesh { position: absolute; inset: 0; z-index: -1; overflow: hidden; }
+    .blob { position: absolute; width: 60vmax; height: 60vmax; filter: blur(60px); opacity: 0.35; border-radius: 50%; mix-blend-mode: screen; }
+    .b1 { background: radial-gradient(closest-side, #1e2630, transparent 60%); left: -10%; top: -20%; animation: float1 18s var(--ease-std) infinite alternate; }
+    .b2 { background: radial-gradient(closest-side, #3a4451, transparent 60%); right: -10%; bottom: -20%; animation: float2 22s var(--ease-std) infinite alternate; }
+    .b3 { background: radial-gradient(closest-side, #00ADB5, transparent 60%); left: 30%; bottom: -10%; opacity: 0.25; animation: float3 26s var(--ease-std) infinite alternate; }
+    @keyframes float1 { from { transform: translate3d(0,0,0) } to { transform: translate3d(5%, -3%, 0) } }
+    @keyframes float2 { from { transform: translate3d(0,0,0) } to { transform: translate3d(-4%, 5%, 0) } }
+    @keyframes float3 { from { transform: translate3d(0,0,0) } to { transform: translate3d(3%, -6%, 0) } }
+
+    .device {
+      position: relative; aspect-ratio: 4/3; border-radius: 24px; background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)); border: var(--hairline); box-shadow: var(--shadow-md); overflow: hidden;
+    }
+    .device .bezel { position: absolute; inset: 12px; border-radius: 20px; background: #0f1217; border: 1px solid rgba(255,255,255,0.06); display: grid; place-items: center; }
+    .device .portrait { width: 120px; height: 120px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.12); background: radial-gradient(circle at 30% 30%, #2b313b, #0f1217); display: grid; place-items: center; color: var(--text-secondary); font-weight: 600; }
+
+    /* About */
+    .about-grid { display: grid; gap: 24px; align-items: start; }
+    @media (min-width: 1024px) { .about-grid { grid-template-columns: 1fr 1.2fr; gap: 48px; } }
+    .card { background: rgba(255,255,255,0.04); border: var(--hairline); border-radius: var(--radius-2xl); box-shadow: var(--shadow-sm); }
+    .card:hover { box-shadow: var(--shadow-md); }
+    .card-padding { padding: 24px; }
+
+    .skills-circles { display: grid; grid-template-columns: repeat(2, minmax(120px,1fr)); gap: 16px; }
+    @media (min-width: 480px) { .skills-circles { grid-template-columns: repeat(3, minmax(120px,1fr)); } }
+
+    .meter { display: grid; place-items: center; gap: 8px; text-align: center; }
+    .meter svg { width: 120px; height: 120px; }
+    .meter .label { font-weight: 600; font-size: var(--fs-200); color: var(--text-secondary); }
+
+    /* Experience timeline */
+    .timeline { position: relative; margin-top: 24px; }
+    .timeline::before { content: ""; position: absolute; left: 10px; top: 0; bottom: 0; width: 2px; background: linear-gradient(var(--accent), rgba(0,173,181,0.1)); border-radius: 1px; opacity: 0.5; }
+    .tl-item { position: relative; display: grid; grid-template-columns: 24px 1fr; gap: 16px; padding: 16px 0; }
+    .tl-dot { width: 20px; height: 20px; border-radius: 50%; background: var(--bg-secondary); border: 2px solid var(--accent); box-shadow: 0 0 0 3px rgba(0,173,181,0.2); margin-top: 4px; }
+    .tl-card { background: rgba(255,255,255,0.04); border: var(--hairline); border-radius: var(--radius-xl); padding: 16px; transition: transform var(--dur-fast) var(--ease-emph), box-shadow var(--dur-fast) var(--ease-std); }
+    .tl-card:hover, .tl-card:focus-within { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .company { display: flex; align-items: center; gap: 10px; color: var(--text-secondary); }
+    .company .logo { width: 28px; height: 28px; border-radius: 6px; background: linear-gradient(135deg, #5aabb0, #3a4451); filter: grayscale(1); transition: filter var(--dur-fast) var(--ease-std); }
+    .tl-card:hover .logo, .tl-card:focus-within .logo { filter: grayscale(0) saturate(1.2) drop-shadow(0 2px 6px rgba(0,173,181,0.35)); }
+
+    /* Skills filterable grid */
+    .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .filter-btn { cursor: pointer; padding: 8px 12px; border-radius: var(--radius-pill); border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.03); color: var(--text-secondary); font-weight: 600; }
+    .filter-btn[aria-pressed="true"] { background: var(--accent); color: #001315; border-color: transparent; }
+    .skills-grid { display: grid; grid-template-columns: repeat(1, minmax(0,1fr)); gap: 12px; }
+    @media (min-width: 640px) { .skills-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+    @media (min-width: 1024px) { .skills-grid { grid-template-columns: repeat(4, minmax(0,1fr)); } }
+    .skill-card { padding: 16px; border-radius: var(--radius-xl); background: rgba(255,255,255,0.04); border: var(--hairline); display: grid; gap: 8px; will-change: transform; transition: transform var(--dur-fast) var(--ease-emph), box-shadow var(--dur-fast) var(--ease-std); }
+    .skill-card:hover { transform: translate3d(0,-4px,0) rotateX(1deg); box-shadow: var(--shadow-md); }
+    .skill-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: var(--text-secondary); font-size: var(--fs-200); }
+    .progress { height: 6px; background: rgba(255,255,255,0.08); border-radius: 6px; overflow: hidden; }
+    .progress > span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), #5fe4ea); width: var(--val, 60%); }
+
+    /* Projects masonry */
+    .masonry { column-count: 1; column-gap: 12px; }
+    @media (min-width: 640px) { .masonry { column-count: 2; } }
+    @media (min-width: 1024px) { .masonry { column-count: 3; } }
+    .project-card { break-inside: avoid; display: block; background: rgba(255,255,255,0.04); border: var(--hairline); border-radius: var(--radius-2xl); overflow: hidden; margin-bottom: 12px; box-shadow: var(--shadow-sm); transition: transform var(--dur-fast) var(--ease-emph), box-shadow var(--dur-fast) var(--ease-std); }
+    .project-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+    .project-media { position: relative; overflow: hidden; }
+    .project-media img { width: 100%; height: auto; display: block; filter: saturate(0.9) contrast(1.05); }
+    .overlay { position: absolute; inset: 0; background: rgba(0,173,181,0.20); opacity: 0; transition: opacity var(--dur-fast) var(--ease-std); display: grid; place-items: center; text-align: center; }
+    .project-card:hover .overlay { opacity: 1; }
+    .project-body { padding: 16px; display: grid; gap: 8px; }
+    .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    /* Modal via <dialog> enhancement */
+    dialog.project-modal { border: 0; border-radius: 18px; padding: 0; background: rgba(57,62,70,0.98); color: var(--text-primary); box-shadow: var(--shadow-lg); width: min(920px, 96vw); }
+    @starting-style { dialog.project-modal[open] { opacity: 0; transform: translateY(12px) scale(0.98); } }
+    dialog.project-modal[open] { opacity: 1; transform: none; transition: opacity var(--dur-med) var(--ease-emph), transform var(--dur-med) var(--ease-emph); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: var(--hairline); position: sticky; top: 0; background: rgba(57,62,70,0.98); backdrop-filter: blur(6px); z-index: 2; }
+    .modal-body { padding: 16px; display: grid; gap: 12px; }
+    .icon-btn { border: 0; background: transparent; color: var(--text-secondary); padding: 8px; border-radius: 10px; cursor: pointer; }
+    .icon-btn:hover, .icon-btn:focus-visible { background: rgba(255,255,255,0.06); color: var(--text-primary); }
+
+    /* Testimonials (scroll-snap carousel) */
+    .testimonials { display: grid; gap: 16px; }
+    .snap-row { display: grid; grid-auto-flow: column; grid-auto-columns: 80%; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 6px; }
+    @media (min-width: 768px) { .snap-row { grid-auto-columns: 40%; } }
+    .quote { scroll-snap-align: start; background: rgba(255,255,255,0.04); border: var(--hairline); border-radius: var(--radius-2xl); padding: 16px; }
+
+    /* Contact */
+    form.contact { display: grid; gap: 12px; }
+    .field { position: relative; }
+    .field input, .field textarea { width: 100%; color: var(--text-primary); background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.14); border-radius: 12px; padding: 16px 14px; font: inherit; resize: vertical; min-height: 48px; }
+    .field label { position: absolute; left: 12px; top: 10px; font-size: var(--fs-200); color: var(--text-secondary); transition: transform var(--dur-fast) var(--ease-std), color var(--dur-fast) var(--ease-std); background: transparent; pointer-events: none; }
+    .field input:focus + label, .field input:not(:placeholder-shown) + label,
+    .field textarea:focus + label, .field textarea:not(:placeholder-shown) + label { transform: translateY(-14px) scale(0.9); color: var(--accent); background: transparent; }
+    .help { font-size: var(--fs-100); color: var(--text-secondary); }
+    .error { color: #ffb4b4; }
+
+    /* Footer */
+    footer { border-top: var(--hairline); padding: 24px 0; color: var(--text-secondary); }
+
+    /* Focus styles */
+    :focus-visible { outline: 2px solid transparent; box-shadow: 0 0 0 3px rgba(0,173,181,0.6); border-radius: 8px; }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+
+    /* AOS fallback classes */
+    [data-reveal] { opacity: 0; transform: translateY(8px); }
+    .revealed { opacity: 1 !important; transform: none !important; transition: opacity var(--dur-med) var(--ease-std), transform var(--dur-med) var(--ease-emph); }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header" role="banner">
+    <div class="container nav-wrap">
+      <div class="brand" aria-label="Site identity">Ahmad Allawi</div>
+      <div class="spacer"></div>
+      <details class="nav" role="navigation" aria-label="Primary" id="nav">
+        <summary aria-label="Open navigation" aria-controls="menu" aria-expanded="false">
+          <span class="hamburger" aria-hidden="true"><span></span><span></span><span></span></span>
+          <span class="sr-only">Menu</span>
+        </summary>
+        <div class="panel" id="menu">
+          <nav class="menu" aria-label="In-page links">
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#experience">Experience</a>
+            <a href="#skills">Skills</a>
+            <a href="#projects">Projects</a>
+            <a href="#contact">Contact</a>
+          </nav>
+        </div>
+      </details>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <!-- HERO -->
+    <section id="home" class="hero section" aria-labelledby="hero-title">
+      <div class="mesh" aria-hidden="true">
+        <div class="blob b1"></div>
+        <div class="blob b2"></div>
+        <div class="blob b3"></div>
+      </div>
+      <div class="container hero-grid">
+        <div data-reveal>
+          <div class="eyebrow">Creative Frontend Developer</div>
+          <h1 id="hero-title">Crafting interfaces that feel inevitable</h1>
+          <p>
+            <!-- REPLACE: hero intro -->
+            I design and build fast, accessible, and elegant web experiences. My work blends strong visual design with engineering discipline—optimized for real users and measurable impact.
+          </p>
+          <div class="cta-row" role="group" aria-label="Primary actions">
+            <a class="btn btn-primary" href="#contact">Hire Ahmad</a>
+            <a class="btn btn-secondary" href="#cv" id="download-cv">Download Résumé</a>
+          </div>
+        </div>
+        <div data-reveal>
+          <div class="device" aria-hidden="true">
+            <div class="bezel">
+              <div class="portrait" title="Portrait placeholder">AA</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="section" aria-labelledby="about-title">
+      <div class="container about-grid">
+        <div class="card card-padding" data-reveal>
+          <h2 id="about-title" style="margin-top:0">About</h2>
+          <p>
+            <!-- REPLACE: bio paragraph 1 -->
+            I'm Ahmad Allawi, a frontend developer focused on creating performant, accessible, and delightful products. My approach combines thoughtful design, robust architecture, and a relentless pursuit of polish.
+          </p>
+          <p>
+            <!-- REPLACE: bio paragraph 2 -->
+            Across startups and enterprise teams, I've shipped design systems, complex dashboards, and high-traffic web apps—consistently raising Lighthouse scores and user satisfaction.
+          </p>
+          <div class="tags" aria-label="Quick facts">
+            <span class="chip">Location: <!-- REPLACE: location -->[Your City, Country]</span>
+            <span class="chip">Years Experience: 6+</span>
+            <span class="chip">Projects Shipped: 35+</span>
+          </div>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="#contact">Let's build</a>
+            <a class="btn btn-secondary" href="#cv">Download CV</a>
+          </div>
+        </div>
+        <div class="card card-padding" data-reveal>
+          <h3 style="margin-top:0">Skill indicators</h3>
+          <div class="skills-circles" role="list">
+            <!-- Accessible SVG meters with text fallbacks -->
+            <div class="meter" role="listitem">
+              <svg viewBox="0 0 120 120" aria-label="JavaScript proficiency 90%" role="img">
+                <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="10"/>
+                <circle cx="60" cy="60" r="50" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="31"/>
+                <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="var(--text-primary)" font-size="16" font-weight="700">90%</text>
+              </svg>
+              <div class="label">JavaScript</div>
+            </div>
+            <div class="meter" role="listitem">
+              <svg viewBox="0 0 120 120" aria-label="CSS proficiency 95%" role="img">
+                <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="10"/>
+                <circle cx="60" cy="60" r="50" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="16"/>
+                <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="var(--text-primary)" font-size="16" font-weight="700">95%</text>
+              </svg>
+              <div class="label">CSS</div>
+            </div>
+            <div class="meter" role="listitem">
+              <svg viewBox="0 0 120 120" aria-label="Accessibility proficiency 90%" role="img">
+                <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="10"/>
+                <circle cx="60" cy="60" r="50" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="31"/>
+                <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="var(--text-primary)" font-size="16" font-weight="700">90%</text>
+              </svg>
+              <div class="label">Accessibility</div>
+            </div>
+            <div class="meter" role="listitem">
+              <svg viewBox="0 0 120 120" aria-label="Performance engineering proficiency 92%" role="img">
+                <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="10"/>
+                <circle cx="60" cy="60" r="50" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="25"/>
+                <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="var(--text-primary)" font-size="16" font-weight="700">92%</text>
+              </svg>
+              <div class="label">Performance</div>
+            </div>
+          </div>
+          <noscript>
+            <ul>
+              <li>JavaScript – 90%</li>
+              <li>CSS – 95%</li>
+              <li>Accessibility – 90%</li>
+              <li>Performance – 92%</li>
+            </ul>
+          </noscript>
+        </div>
+        <!-- REPLACE: Résumé section; link this to a hosted PDF or Drive link -->
+        <div id="cv" class="card card-padding" data-reveal>
+          <h3 style="margin-top:0">Résumé</h3>
+          <p>
+            Add a résumé PDF link here: 
+            <a href="#" rel="noopener nofollow">Download PDF</a>
+          </p>
+          <p class="help">If you prefer, link to a Google Drive or Notion page. The top CTAs point to this anchor.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience" class="section" aria-labelledby="exp-title">
+      <div class="container">
+        <div class="eyebrow">Experience</div>
+        <h2 id="exp-title" style="margin-top:8px">Selected roles</h2>
+        <div class="timeline" role="list">
+          <!-- Entry 1 -->
+          <div class="tl-item" role="listitem" data-reveal>
+            <div class="tl-dot" aria-hidden="true"></div>
+            <div class="tl-card" tabindex="0">
+              <div class="company"><span class="logo" aria-hidden="true"></span> <!-- REPLACE: company -->AeroStack</div>
+              <h3 style="margin:6px 0 4px">Senior Frontend Engineer</h3>
+              <div class="chip">2022 — Present</div>
+              <ul>
+                <li>Led design system overhaul, cutting UI defects by 43% and speeding feature delivery by 28%.</li>
+                <li>Improved Core Web Vitals to 99/100; LCP reduced from 3.2s to 1.6s on mid-tier devices.</li>
+              </ul>
+            </div>
+          </div>
+          <!-- Entry 2 -->
+          <div class="tl-item" role="listitem" data-reveal>
+            <div class="tl-dot" aria-hidden="true"></div>
+            <div class="tl-card" tabindex="0">
+              <div class="company"><span class="logo" aria-hidden="true"></span> <!-- REPLACE: company -->Northwind Labs</div>
+              <h3 style="margin:6px 0 4px">Frontend Developer</h3>
+              <div class="chip">2019 — 2022</div>
+              <ul>
+                <li>Shipped analytics dashboard used by 50k+ users; achieved 60fps interactions across complex views.</li>
+                <li>Built accessibility testing workflow → 100% automated axe checks on CI.</li>
+              </ul>
+            </div>
+          </div>
+          <!-- Entry 3 -->
+          <div class="tl-item" role="listitem" data-reveal>
+            <div class="tl-dot" aria-hidden="true"></div>
+            <div class="tl-card" tabindex="0">
+              <div class="company"><span class="logo" aria-hidden="true"></span> <!-- REPLACE: company -->BlueGrid</div>
+              <h3 style="margin:6px 0 4px">UI Engineer</h3>
+              <div class="chip">2017 — 2019</div>
+              <ul>
+                <li>Implemented progressive image pipeline → improved FCP by 45% on content-heavy pages.</li>
+                <li>Led component library migration to CSS Grid & custom properties.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills" class="section" aria-labelledby="skills-title">
+      <div class="container">
+        <div class="eyebrow">Skills & Expertise</div>
+        <h2 id="skills-title" style="margin-top:8px">What I work with</h2>
+        <div class="filters" role="group" aria-label="Filter skills">
+          <button class="filter-btn" data-filter="all" aria-pressed="true">All</button>
+          <button class="filter-btn" data-filter="frontend" aria-pressed="false">Frontend</button>
+          <button class="filter-btn" data-filter="styling" aria-pressed="false">Styling</button>
+          <button class="filter-btn" data-filter="tools" aria-pressed="false">Tools</button>
+          <button class="filter-btn" data-filter="backend" aria-pressed="false">Backend</button>
+        </div>
+        <div class="skills-grid" id="skills-grid">
+          <article class="skill-card" data-cat="frontend" aria-label="JavaScript 90%">
+            <div class="skill-meta"><strong>JavaScript (ES6+)</strong><span>90%</span></div>
+            <div class="progress" aria-hidden="true"><span style="--val:90%"></span></div>
+          </article>
+          <article class="skill-card" data-cat="frontend" aria-label="TypeScript 85%">
+            <div class="skill-meta"><strong>TypeScript</strong><span>85%</span></div>
+            <div class="progress" aria-hidden="true"><span style="--val:85%"></span></div>
+          </article>
+          <article class="skill-card" data-cat="styling" aria-label="CSS / SCSS 95%">
+            <div class="skill-meta"><strong>CSS / SCSS</strong><span>95%</span></div>
+            <div class="progress" aria-hidden="true"><span style="--val:95%"></span></div>
+          </article>
+          <article class="skill-card" data-cat="styling" aria-label="Design Systems 90%">
+            <div class="skill-meta"><strong>Design Systems</strong><span>90%</span></div>
+            <div class="progress" aria-hidden="true"><span style="--val:90%"></span></div>
+          </article>
+          <article class="skill-card" data-cat="tools" aria-label="Vite / Webpack 80%">
+            <div class="skill-meta"><strong>Vite / Webpack</strong><span>80%</span></div>
+            <div class="progress" aria-hidden="true"><span style="--val:80%"></span></div>
+          </article>
+          <article class="skill-card" data-cat="tools" aria-label="Testing 85%">
+            <div class="skill-meta"><strong>Testing (Jest, Playwright)</strong><span>85%</span></div>
+            <div class="progress" aria-hidden="true"><span style="--val:85%"></span></div>
+          </article>
+          <article class="skill-card" data-cat="backend" aria-label="Node / APIs 75%">
+            <div class="skill-meta"><strong>Node / APIs</strong><span>75%</span></div>
+            <div class="progress" aria-hidden="true"><span style="--val:75%"></span></div>
+          </article>
+          <article class="skill-card" data-cat="backend" aria-label="Databases 65%">
+            <div class="skill-meta"><strong>Databases</strong><span>65%</span></div>
+            <div class="progress" aria-hidden="true"><span style="--val:65%"></span></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="section" aria-labelledby="projects-title">
+      <div class="container">
+        <div class="eyebrow">Projects</div>
+        <h2 id="projects-title" style="margin-top:8px">Selected work</h2>
+        <div class="masonry" id="project-grid">
+          <!-- 6–8 placeholder projects -->
+          <a class="project-card" href="#project-ecommerce" data-project="ecommerce" aria-labelledby="proj1-title">
+            <div class="project-media">
+              <img loading="lazy" alt="E-commerce storefront UI preview" width="640" height="404" srcset="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='404'%3E%3Crect width='100%25' height='100%25' fill='%23393E46'/%3E%3Ctext x='50%25' y='52%25' dominant-baseline='middle' text-anchor='middle' fill='%23EEEEEE' font-family='system-ui,Segoe UI,Arial' font-size='22'%3EE-commerce%20Storefront%3C/text%3E%3C/svg%3E" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='404'%3E%3Crect width='100%25' height='100%25' fill='%23393E46'/%3E%3C/svg%3E">
+              <div class="overlay"><span class="chip">View details</span></div>
+            </div>
+            <div class="project-body">
+              <strong id="proj1-title">E-commerce Storefront</strong>
+              <div class="tags" aria-label="Tech stack"><span class="chip">Next.js</span><span class="chip">Edge</span><span class="chip">A11y</span></div>
+              <p class="sr-only">Problem: slow LCP; Solution: partial hydration; Result: +32% conversion.</p>
+            </div>
+          </a>
+
+          <a class="project-card" href="#project-saas" data-project="saas" aria-labelledby="proj2-title">
+            <div class="project-media">
+              <img loading="lazy" alt="SaaS analytics dashboard preview" width="640" height="404" srcset="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='404'%3E%3Crect width='100%25' height='100%25' fill='%23393E46'/%3E%3Ctext x='50%25' y='52%25' dominant-baseline='middle' text-anchor='middle' fill='%23EEEEEE' font-family='system-ui,Segoe UI,Arial' font-size='22'%3ESaaS%20Dashboard%3C/text%3E%3C/svg%3E" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='404'%3E%3Crect width='100%25' height='100%25' fill='%23393E46'/%3E%3C/svg%3E">
+              <div class="overlay"><span class="chip">View details</span></div>
+            </div>
+            <div class="project-body">
+              <strong id="proj2-title">SaaS Analytics Dashboard</strong>
+              <div class="tags" aria-label="Tech stack"><span class="chip">TypeScript</span><span class="chip">WebGL</span><span class="chip">Perf</span></div>
+              <p class="sr-only">Problem: choppy interactions; Solution: render budgeting; Result: 60fps across views.</p>
+            </div>
+          </a>
+
+          <a class="project-card" href="#project-mobile" data-project="mobile" aria-labelledby="proj3-title">
+            <div class="project-media">
+              <img loading="lazy" alt="Mobile app UI preview" width="640" height="404" srcset="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='404'%3E%3Crect width='100%25' height='100%25' fill='%23393E46'/%3E%3Ctext x='50%25' y='52%25' dominant-baseline='middle' text-anchor='middle' fill='%23EEEEEE' font-family='system-ui,Segoe UI,Arial' font-size='22'%3EMobile%20App%3C/text%3E%3C/svg%3E" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='404'%3E%3Crect width='100%25' height='100%25' fill='%23393E46'/%3E%3C/svg%3E">
+              <div class="overlay"><span class="chip">View details</span></div>
+            </div>
+            <div class="project-body">
+              <strong id="proj3-title">Mobile Commerce App</strong>
+              <div class="tags" aria-label="Tech stack"><span class="chip">PWA</span><span class="chip">Offline</span><span class="chip">A11y</span></div>
+              <p class="sr-only">Problem: flaky connectivity; Solution: offline-first; Result: +18% retention.</p>
+            </div>
+          </a>
+
+          <a class="project-card" href="#project-design-system" data-project="design-system" aria-labelledby="proj4-title">
+            <div class="project-media">
+              <img loading="lazy" alt="Design system components preview" width="640" height="404" srcset="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='404'%3E%3Crect width='100%25' height='100%25' fill='%23393E46'/%3E%3Ctext x='50%25' y='52%25' dominant-baseline='middle' text-anchor='middle' fill='%23EEEEEE' font-family='system-ui,Segoe UI,Arial' font-size='22'%3EDesign%20System%3C/text%3E%3C/svg%3E" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='404'%3E%3Crect width='100%25' height='100%25' fill='%23393E46'/%3E%3C/svg%3E">
+              <div class="overlay"><span class="chip">View details</span></div>
+            </div>
+            <div class="project-body">
+              <strong id="proj4-title">Design System</strong>
+              <div class="tags" aria-label="Tech stack"><span class="chip">Tokens</span><span class="chip">Theming</span><span class="chip">WCAG</span></div>
+              <p class="sr-only">Problem: inconsistent UI; Solution: token-driven DS; Result: -43% defects.</p>
+            </div>
+          </a>
+
+          <a class="project-card" href="#project-performance" data-project="performance" aria-labelledby="proj5-title">
+            <div class="project-media">
+              <img loading="lazy" alt="Performance audit charts preview" width="640" height="404" srcset="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='404'%3E%3Crect width='100%25' height='100%25' fill='%23393E46'/%3E%3Ctext x='50%25' y='52%25' dominant-baseline='middle' text-anchor='middle' fill='%23EEEEEE' font-family='system-ui,Segoe UI,Arial' font-size='22'%3EPerf%20Audit%3C/text%3E%3C/svg%3E" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='404'%3E%3Crect width='100%25' height='100%25' fill='%23393E46'/%3E%3C/svg%3E">
+              <div class="overlay"><span class="chip">View details</span></div>
+            </div>
+            <div class="project-body">
+              <strong id="proj5-title">Performance Audit</strong>
+              <div class="tags" aria-label="Tech stack"><span class="chip">CWV</span><span class="chip">SSR</span><span class="chip">CDN</span></div>
+              <p class="sr-only">Problem: poor CWV; Solution: SSR & CDN; Result: +21% SEO.</p>
+            </div>
+          </a>
+
+          <a class="project-card" href="#project-visualization" data-project="visualization" aria-labelledby="proj6-title">
+            <div class="project-media">
+              <img loading="lazy" alt="Data visualization preview" width="640" height="404" srcset="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='404'%3E%3Crect width='100%25' height='100%25' fill='%23393E46'/%3E%3Ctext x='50%25' y='52%25' dominant-baseline='middle' text-anchor='middle' fill='%23EEEEEE' font-family='system-ui,Segoe UI,Arial' font-size='22'%3EVisualization%3C/text%3E%3C/svg%3E" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='404'%3E%3Crect width='100%25' height='100%25' fill='%23393E46'/%3E%3C/svg%3E">
+              <div class="overlay"><span class="chip">View details</span></div>
+            </div>
+            <div class="project-body">
+              <strong id="proj6-title">Data Visualization</strong>
+              <div class="tags" aria-label="Tech stack"><span class="chip">Canvas</span><span class="chip">Web Anim</span><span class="chip">A11y</span></div>
+              <p class="sr-only">Problem: insights hidden; Solution: accessible charts; Result: +2x usage.</p>
+            </div>
+          </a>
+        </div>
+
+        <!-- Project details (progressive enhancement via <details>, dialogs created by JS) -->
+        <div id="project-details">
+          <details id="project-ecommerce" class="card card-padding" open>
+            <summary><strong>E-commerce Storefront</strong> – open for content without JS</summary>
+            <p><strong>Summary:</strong> Migrated to edge-rendered storefront with streaming SSR.</p>
+            <p><strong>Challenge:</strong> High bounce from slow LCP on mobile.</p>
+            <p><strong>Solution:</strong> Partial hydration, responsive images, and critical CSS inlining.</p>
+            <p><strong>Role:</strong> Lead Frontend. <strong>Stack:</strong> TS, Next.js, Edge, CSS Variables.</p>
+            <p><strong>Results:</strong> LCP 1.6s (−50%), +32% conversion.</p>
+          </details>
+
+          <details id="project-saas" class="card card-padding">
+            <summary><strong>SaaS Analytics Dashboard</strong></summary>
+            <p><strong>Summary:</strong> Real-time analytics with budgeted rendering.</p>
+            <p><strong>Challenge:</strong> Choppy interactions on complex views.</p>
+            <p><strong>Solution:</strong> Virtualization, OffscreenCanvas for heavy charts.</p>
+            <p><strong>Role:</strong> Frontend Engineer. <strong>Stack:</strong> TS, Web Workers, Canvas.</p>
+            <p><strong>Results:</strong> 60fps interactions; +24% retention.</p>
+          </details>
+
+          <details id="project-mobile" class="card card-padding">
+            <summary><strong>Mobile Commerce App</strong></summary>
+            <p><strong>Summary:</strong> PWA enabling offline purchase flow.</p>
+            <p><strong>Challenge:</strong> Flaky connectivity in key markets.</p>
+            <p><strong>Solution:</strong> Caching strategies, background sync, low-bandwidth media.</p>
+            <p><strong>Role:</strong> Frontend. <strong>Stack:</strong> PWA APIs, Workbox, CSS Grid.</p>
+            <p><strong>Results:</strong> +18% 30-day retention; −38% abandonment.</p>
+          </details>
+
+          <details id="project-design-system" class="card card-padding">
+            <summary><strong>Design System</strong></summary>
+            <p><strong>Summary:</strong> Token-driven system across web platform.</p>
+            <p><strong>Challenge:</strong> Inconsistent UI, slow delivery.</p>
+            <p><strong>Solution:</strong> Tokens, semantic slots, docs site, lint rules.</p>
+            <p><strong>Role:</strong> Systems Engineer. <strong>Stack:</strong> CSS Vars, TS, Storybook.</p>
+            <p><strong>Results:</strong> −43% UI defects; +28% shipping speed.</p>
+          </details>
+
+          <details id="project-performance" class="card card-padding">
+            <summary><strong>Performance Audit</strong></summary>
+            <p><strong>Summary:</strong> Audit + remediation for CWV/SEO.</p>
+            <p><strong>Challenge:</strong> Poor rankings; slow mobile.</p>
+            <p><strong>Solution:</strong> Preload strategy, code-split, CDN policies.</p>
+            <p><strong>Role:</strong> Consultant. <strong>Stack:</strong> Lighthouse, WebPageTest.</p>
+            <p><strong>Results:</strong> +21% organic traffic; 95+ CWV.</p>
+          </details>
+
+          <details id="project-visualization" class="card card-padding">
+            <summary><strong>Data Visualization</strong></summary>
+            <p><strong>Summary:</strong> Accessible charting toolkit.</p>
+            <p><strong>Challenge:</strong> Insights buried in tables.</p>
+            <p><strong>Solution:</strong> Sonified charts, keyboard nav, ARIA annotations.</p>
+            <p><strong>Role:</strong> UI Engineer. <strong>Stack:</strong> Canvas, Web Animations, ARIA.</p>
+            <p><strong>Results:</strong> 2x feature usage; +12 NPS.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section id="testimonials" class="section" aria-labelledby="testimonials-title">
+      <div class="container testimonials">
+        <div class="eyebrow">Testimonials</div>
+        <h2 id="testimonials-title" style="margin-top:8px">What clients say</h2>
+        <div class="snap-row" aria-live="polite" aria-atomic="false">
+          <blockquote class="quote">
+            <p>"Ahmad transformed our storefront's speed and UX. Conversion jumped immediately."</p>
+            <footer>— <!-- REPLACE -->Maya K., Head of Product, AeroStack</footer>
+          </blockquote>
+          <blockquote class="quote">
+            <p>"A rare mix of design sensitivity and engineering rigor. Our team leveled up."</p>
+            <footer>— <!-- REPLACE -->Owen S., Eng Manager, Northwind Labs</footer>
+          </blockquote>
+          <blockquote class="quote">
+            <p>"Accessibility went from checkbox to culture. Ahmad led the way."</p>
+            <footer>— <!-- REPLACE -->Priya T., Director of UX, BlueGrid</footer>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section" aria-labelledby="contact-title">
+      <div class="container">
+        <div class="eyebrow">Contact</div>
+        <h2 id="contact-title" style="margin-top:8px">Let's talk</h2>
+        <div class="about-grid">
+          <div class="card card-padding" data-reveal>
+            <form class="contact" id="contact-form" action="mailto:placeholder@email.com" method="post" enctype="text/plain" novalidate>
+              <div class="field">
+                <input id="name" name="name" placeholder=" " required aria-required="true" aria-describedby="name-help" />
+                <label for="name">Your name</label>
+                <div id="name-help" class="help">Please enter your full name.</div>
+              </div>
+              <div class="field">
+                <input id="email" name="email" type="email" placeholder=" " required aria-required="true" aria-describedby="email-help" />
+                <label for="email">Email address</label>
+                <div id="email-help" class="help">We'll only use this to reply.</div>
+              </div>
+              <div class="field">
+                <textarea id="message" name="message" rows="5" placeholder=" " required aria-required="true" aria-describedby="message-help"></textarea>
+                <label for="message">Your message</label>
+                <div id="message-help" class="help">Tell me about your project or role.</div>
+              </div>
+              <div role="status" aria-live="polite" id="form-status" class="help"></div>
+              <div class="cta-row">
+                <button type="submit" class="btn btn-primary">Send message</button>
+                <a class="btn btn-secondary" href="mailto:placeholder@email.com">Or email directly</a>
+              </div>
+            </form>
+          </div>
+          <div class="card card-padding" data-reveal>
+            <h3 style="margin-top:0">Elsewhere</h3>
+            <p>Email: <a href="mailto:placeholder@email.com">placeholder@email.com</a></p>
+            <p>LinkedIn: <a href="#" rel="nofollow noopener">linkedin.com/in/username</a> <!-- REPLACE --></p>
+            <p>GitHub: <a href="#" rel="nofollow noopener">github.com/username</a> <!-- REPLACE --></p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer role="contentinfo">
+    <div class="container" style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+      <div>© <span id="year"></span> Ahmad Allawi. All rights reserved.</div>
+      <div class="tags">
+        <a class="chip" href="#home">Top</a>
+        <a class="chip" href="#projects">Projects</a>
+        <a class="chip" href="#contact">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- DIALOG TEMPLATE (declarative, cloned by JS) -->
+  <template id="project-template">
+    <dialog class="project-modal" aria-modal="true">
+      <div class="modal-header">
+        <strong class="modal-title">Title</strong>
+        <button class="icon-btn" data-close aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="tags"></div>
+        <p class="summary"></p>
+        <p class="challenge"></p>
+        <p class="solution"></p>
+        <p class="role"></p>
+        <p class="results"></p>
+      </div>
+    </dialog>
+  </template>
+
+  <!-- Optional AOS script -->
+  <script defer src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
+  <script>
+    // Minimal, modular JS. Progressive enhancement only.
+    (function() {
+      const $ = (sel, ctx=document) => ctx.querySelector(sel);
+      const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
+
+      // Current year
+      $('#year').textContent = new Date().getFullYear();
+
+      // Nav details aria-expanded sync
+      const navDetails = $('#nav');
+      if (navDetails) {
+        const summary = navDetails.querySelector('summary');
+        const menu = $('#menu');
+        const sync = () => summary.setAttribute('aria-expanded', navDetails.hasAttribute('open'));
+        navDetails.addEventListener('toggle', sync);
+        sync();
+        // Close on link click (mobile)
+        menu && menu.addEventListener('click', (e) => {
+          if (e.target.closest('a') && window.innerWidth < 1024) navDetails.removeAttribute('open');
+        });
+        // Basic escape to close
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') navDetails.removeAttribute('open'); });
+      }
+
+      // Scroll reveal: prefer AOS, else IntersectionObserver fallback
+      const useAOS = () => typeof AOS !== 'undefined' && AOS && typeof AOS.init === 'function';
+      if (useAOS()) {
+        // Annotate nodes
+        $$('[data-reveal]').forEach(n => n.setAttribute('data-aos', 'fade-up'));
+        AOS.init({ duration: 350, easing: 'ease-out', once: true, offset: 60 });
+      } else if ('IntersectionObserver' in window) {
+        const obs = new IntersectionObserver((entries, o) => {
+          for (const it of entries) {
+            if (it.isIntersecting) { it.target.classList.add('revealed'); o.unobserve(it.target); }
+          }
+        }, { rootMargin: '0px 0px -10% 0px' });
+        $$('[data-reveal]').forEach(n => obs.observe(n));
+      } else {
+        $$('[data-reveal]').forEach(n => n.classList.add('revealed'));
+      }
+
+      // Skills filters (accessible toggle buttons)
+      const filterButtons = $$('.filter-btn');
+      const skillsGrid = $('#skills-grid');
+      const setFilter = (cat) => {
+        if (!skillsGrid) return;
+        $$('.skill-card', skillsGrid).forEach(card => {
+          const show = cat === 'all' || card.dataset.cat === cat;
+          card.style.display = show ? '' : 'none';
+        });
+      };
+      filterButtons.forEach(btn => btn.addEventListener('click', () => {
+        filterButtons.forEach(b => b.setAttribute('aria-pressed', 'false'));
+        btn.setAttribute('aria-pressed', 'true');
+        setFilter(btn.dataset.filter);
+      }));
+
+      // Project modal enhancement with <dialog>
+      const template = $('#project-template');
+      const detailsRoot = $('#project-details');
+      const activeDialogs = new Set();
+
+      function openProjectFromHash() {
+        const id = location.hash.replace('#', '');
+        if (!id) return;
+        const d = $('#' + id);
+        if (!d || !('showModal' in document.createElement('dialog'))) return; // fallback to in-page details
+        const meta = detailsToMeta(d);
+        const dialog = buildDialog(meta);
+        document.body.appendChild(dialog);
+        dialog.showModal();
+        activeDialogs.add(dialog);
+        trapDialog(dialog);
+        dialog.addEventListener('close', () => {
+          activeDialogs.delete(dialog);
+          dialog.remove();
+          if (history.state) history.replaceState('', document.title, window.location.pathname + window.location.search);
+        });
+      }
+
+      function detailsToMeta(details) {
+        const title = details.querySelector('summary')?.innerText || 'Project';
+        const ps = details.querySelectorAll('p');
+        return {
+          title,
+          summary: ps[0]?.innerText || '',
+          challenge: ps[1]?.innerText || '',
+          solution: ps[2]?.innerText || '',
+          role: ps[3]?.innerText || '',
+          results: ps[4]?.innerText || ''
+        };
+      }
+
+      function buildDialog(meta) {
+        const node = template.content.firstElementChild.cloneNode(true);
+        node.querySelector('.modal-title').textContent = meta.title;
+        node.querySelector('.summary').textContent = meta.summary;
+        node.querySelector('.challenge').textContent = meta.challenge;
+        node.querySelector('.solution').textContent = meta.solution;
+        node.querySelector('.role').textContent = meta.role;
+        node.querySelector('.results').textContent = meta.results;
+        node.querySelector('[data-close]').addEventListener('click', () => node.close());
+        return node;
+      }
+
+      function trapDialog(dialog) {
+        const focusable = () => $$('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])', dialog)
+                                .filter(el => !el.hasAttribute('disabled'));
+        const first = () => focusable()[0];
+        const last = () => focusable().slice(-1)[0];
+        dialog.addEventListener('keydown', (e) => {
+          if (e.key === 'Tab') {
+            const f = focusable();
+            if (!f.length) return;
+            if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); last().focus(); }
+            else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { e.preventDefault(); first().focus(); }
+          } else if (e.key === 'Escape') {
+            dialog.close();
+          }
+        });
+        // Focus first focusable when opened
+        dialog.addEventListener('close', () => document.body.removeAttribute('aria-hidden'));
+        dialog.addEventListener('cancel', (e) => { e.preventDefault(); dialog.close(); });
+        dialog.addEventListener('animationend', () => {});
+        setTimeout(() => { const el = first(); el && el.focus(); }, 0);
+        document.body.setAttribute('aria-hidden', 'true');
+      }
+
+      // Delegate project card clicks to open dialog version
+      $('#project-grid')?.addEventListener('click', (e) => {
+        const a = e.target.closest('a.project-card');
+        if (!a) return;
+        if (!('showModal' in document.createElement('dialog'))) return; // let default anchor work
+        e.preventDefault();
+        const id = a.getAttribute('href').slice(1);
+        const details = $('#' + id);
+        if (!details) return;
+        const meta = detailsToMeta(details);
+        const dialog = buildDialog(meta);
+        document.body.appendChild(dialog);
+        dialog.showModal();
+        activeDialogs.add(dialog);
+        trapDialog(dialog);
+        history.pushState(null, '', '#' + id);
+        dialog.addEventListener('close', () => {
+          activeDialogs.delete(dialog);
+          dialog.remove();
+          if (history.state !== null) history.back();
+        });
+      });
+
+      window.addEventListener('hashchange', () => {
+        if (location.hash && !activeDialogs.size) openProjectFromHash();
+      });
+      // Open initial hash if present
+      openProjectFromHash();
+
+      // Contact form client-side validation (non-blocking, mailto fallback)
+      const form = $('#contact-form');
+      if (form) {
+        form.addEventListener('submit', (e) => {
+          const name = $('#name').value.trim();
+          const email = $('#email').value.trim();
+          const message = $('#message').value.trim();
+          const status = $('#form-status');
+          const errors = [];
+          if (!name) errors.push('Please add your name.');
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push('Please enter a valid email.');
+          if (message.length < 10) errors.push('Message should be at least 10 characters.');
+          if (errors.length) {
+            e.preventDefault();
+            status.textContent = errors.join(' ');
+            status.classList.add('error');
+            form.querySelector('[aria-invalid="true"]')?.removeAttribute('aria-invalid');
+            if (!name) $('#name').setAttribute('aria-invalid', 'true');
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) $('#email').setAttribute('aria-invalid', 'true');
+            if (message.length < 10) $('#message').setAttribute('aria-invalid', 'true');
+          } else {
+            status.textContent = 'Opening your email client…';
+            status.classList.remove('error');
+          }
+        });
+      }
+    })();
+  </script>
+
+  <!--
+  QA CHECKLIST
+  - [ ] Single file opens locally and renders full layout with JS enabled.
+  - [ ] Site content is readable and functional with JS disabled (progressive enhancement).
+  - [ ] Keyboard-only navigation works end-to-end; skip link, focus states visible.
+  - [ ] All images have alt text; forms have labels and aria attributes.
+  - [ ] Lighthouse targets: Perf ≥95, A11y 100, Best Practices 100, SEO 100 (explain variance if any).
+  - [ ] Performance optimizations: inline critical CSS, lazy loading, SVGs, minimal JS.
+  - [ ] Accessibility: WCAG 2.1 AA; landmarks, roles, aria-live; contrast verified.
+  - [ ] Cross-browser tested: Chrome, Firefox, Safari, Edge (latest two versions).
+
+  Replacement guide
+  - Name, title, bio: search for REPLACE in About and head tags.
+  - Location, contact: replace chips and mailto in Contact.
+  - Experience entries: update company names, durations, achievements.
+  - Projects: update titles, tags, and details sections; images via src/srcset.
+  - Social links: update LinkedIn/GitHub URLs.
+  - Colors or scale: edit :root custom properties.
+
+  Notes
+  - File size target: this HTML is optimized to be under 500KB without external assets.
+  - Fonts are optional; system stack provides graceful fallback if blocked.
+  - AOS is optional; fallback IntersectionObserver reveal used when missing.
+  -->
+</body>
+</html>
